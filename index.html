@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>SENDI STORE · Premium UID</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700;14..32,800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            background: radial-gradient(circle at 20% 30%, #0a0a1a, #05050a);
+            font-family: 'Inter', 'Space Grotesk', sans-serif;
+            min-height: 100vh;
+            color: #fff;
+            overflow-x: hidden;
+        }
+        
+        /* Bintang animasi */
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            opacity: 0;
+            animation: twinkle 3s infinite;
+        }
+        @keyframes twinkle {
+            0%, 100% { opacity: 0; transform: scale(0.5); }
+            50% { opacity: 1; transform: scale(1); }
+        }
+        
+        /* Loading screen premium */
+        #loadingOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #05050a;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .loader-logo {
+            text-align: center;
+            position: relative;
+        }
+        .loader-logo h1 {
+            font-size: 4rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #FFD966, #FFA559, #FF6A4A);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: 4px;
+            animation: glowPulse 1.5s ease-in-out infinite;
+        }
+        .loader-logo .loader-text {
+            color: #ffbc6e;
+            margin-top: 1rem;
+            font-size: 0.85rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+        .loader-progress {
+            width: 200px;
+            height: 2px;
+            background: rgba(255,165,89,0.2);
+            margin: 20px auto 0;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        .loader-progress-bar {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, #FFD966, #FF6A4A);
+            animation: loadProgress 1.5s ease-out forwards;
+        }
+        @keyframes loadProgress {
+            0% { width: 0%; }
+            100% { width: 100%; }
+        }
+        @keyframes glowPulse {
+            0%, 100% { text-shadow: 0 0 20px rgba(255,165,89,0.3); }
+            50% { text-shadow: 0 0 40px rgba(255,165,89,0.6); }
+        }
+        
+        /* Koin topbar premium */
+        .coin-topbar {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(17, 22, 31, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 165, 89, 0.3);
+            border-radius: 60px;
+            padding: 10px 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 100;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+        .coin-topbar:hover {
+            border-color: #ffa559;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(255,165,89,0.2);
+        }
+        .coin-icon {
+            font-size: 1.5rem;
+            filter: drop-shadow(0 0 5px #ffa559);
+        }
+        .coin-amount {
+            font-weight: 800;
+            color: #ffbc6e;
+            font-size: 1.3rem;
+            font-family: 'Space Grotesk', monospace;
+        }
+        
+        /* Admin button */
+        .admin-btn {
+            position: fixed;
+            bottom: 25px;
+            left: 25px;
+            z-index: 100;
+        }
+        .admin-btn a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(13, 17, 25, 0.8);
+            backdrop-filter: blur(12px);
+            padding: 10px 20px;
+            border-radius: 60px;
+            border: 1px solid rgba(255, 165, 89, 0.3);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-size: 0.75rem;
+            color: #ffbc6e;
+            font-weight: 600;
+        }
+        .admin-btn a:hover {
+            border-color: #ffa559;
+            transform: translateX(5px);
+            background: rgba(255,165,89,0.1);
+        }
+        
+        /* Modal premium */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.95);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background: rgba(13, 17, 25, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,165,89,0.3);
+            border-radius: 32px;
+            padding: 2rem;
+            max-width: 420px;
+            width: 90%;
+            text-align: center;
+            animation: modalFadeIn 0.3s ease;
+        }
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .modal-content h3 {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #FFD966, #FFA559);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .close-modal {
+            float: right;
+            cursor: pointer;
+            font-size: 1.8rem;
+            color: #ff8888;
+            transition: 0.2s;
+        }
+        .close-modal:hover { color: #ff4444; }
+        
+        /* Toast premium */
+        .toast-msg {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(26, 58, 42, 0.95);
+            backdrop-filter: blur(12px);
+            border: 1px solid #25D366;
+            color: #7ae9a3;
+            padding: 12px 28px;
+            border-radius: 60px;
+            z-index: 1100;
+            font-size: 0.85rem;
+            font-weight: 500;
+            animation: toastSlide 0.3s ease;
+        }
+        @keyframes toastSlide {
+            from { bottom: 0; opacity: 0; }
+            to { bottom: 30px; opacity: 1; }
+        }
+        
+        /* Container utama */
+        .container {
+            position: relative;
+            z-index: 2;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+        
+        .store-header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+            animation: fadeInDown 0.8s ease;
+        }
+        .store-header h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #FFD966, #FFA559, #FF6A4A);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: 2px;
+        }
+        .tagline {
+            text-align: center;
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.6);
+            margin-top: 8px;
+            letter-spacing: 2px;
+        }
+        
+        .kode-section {
+            text-align: center;
+            margin: 20px 0;
+            animation: fadeInUp 0.6s ease;
+        }
+        .kode-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.5);
+            letter-spacing: 2px;
+        }
+        .kode-akun-box {
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 165, 89, 0.5);
+            border-radius: 60px;
+            padding: 12px 24px;
+            font-family: 'Space Grotesk', monospace;
+            font-size: 1rem;
+            font-weight: 600;
+            text-align: center;
+            margin: 10px auto;
+            display: inline-block;
+            color: #ffbc6e;
+            letter-spacing: 1px;
+        }
+        .copy-btn {
+            background: rgba(255, 165, 89, 0.15);
+            border: 1px solid rgba(255, 165, 89, 0.3);
+            padding: 6px 18px;
+            border-radius: 60px;
+            color: #ffbc6e;
+            cursor: pointer;
+            font-size: 0.7rem;
+            transition: all 0.2s;
+            margin-left: 10px;
+        }
+        .copy-btn:hover {
+            background: rgba(255, 165, 89, 0.3);
+            transform: scale(1.02);
+        }
+        .kode-hint {
+            font-size: 0.6rem;
+            color: rgba(255,255,255,0.4);
+            margin-top: 8px;
+        }
+        
+        .stats-row {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            margin: 30px 0;
+        }
+        .stat-card {
+            background: rgba(17, 22, 31, 0.7);
+            backdrop-filter: blur(12px);
+            border-radius: 28px;
+            padding: 1rem 2rem;
+            text-align: center;
+            border: 1px solid rgba(255, 165, 89, 0.2);
+            transition: all 0.3s ease;
+            min-width: 150px;
+        }
+        .stat-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255, 165, 89, 0.5);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        .stat-icon {
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+        }
+        .stat-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.5);
+            letter-spacing: 2px;
+        }
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #ffbc6e;
+            font-family: 'Space Grotesk', monospace;
+        }
+        
+        .table-wrapper {
+            background: rgba(13, 17, 25, 0.6);
+            backdrop-filter: blur(12px);
+            border-radius: 28px;
+            border: 1px solid rgba(255, 165, 89, 0.15);
+            overflow-x: auto;
+            margin: 25px 0;
+            transition: all 0.3s ease;
+        }
+        .table-wrapper:hover {
+            border-color: rgba(255, 165, 89, 0.3);
+        }
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 650px;
+        }
+        .data-table th {
+            text-align: left;
+            padding: 1.2rem 1rem;
+            background: rgba(0, 0, 0, 0.3);
+            color: #ffc285;
+            font-weight: 600;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 1px solid rgba(255, 165, 89, 0.2);
+        }
+        .data-table td {
+            padding: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 0.85rem;
+        }
+        .data-table tr {
+            transition: all 0.2s;
+        }
+        .data-table tr:hover {
+            background: rgba(255, 165, 89, 0.08);
+        }
+        .uid-col {
+            font-family: 'Space Grotesk', monospace;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+        .price-col {
+            font-weight: 700;
+            color: #ffbc6e;
+            font-family: 'Space Grotesk', monospace;
+        }
+        .btn-buy-coin {
+            background: linear-gradient(135deg, #25D366, #1da855);
+            border: none;
+            padding: 8px 24px;
+            border-radius: 60px;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 0.75rem;
+            color: #0a2617;
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+        .btn-buy-coin:hover:not(:disabled) {
+            transform: scale(1.02);
+            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3);
+        }
+        .btn-buy-coin:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            background: #555;
+        }
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            font-size: 0.7rem;
+            color: rgba(255,255,255,0.4);
+        }
+        
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @media (max-width: 768px) {
+            .store-header h1 { font-size: 2rem; }
+            .stat-card { padding: 0.6rem 1rem; min-width: 100px; }
+            .stat-number { font-size: 1.3rem; }
+            .data-table th, .data-table td { padding: 0.7rem 0.5rem; font-size: 0.7rem; }
+            .btn-buy-coin { padding: 5px 14px; font-size: 0.65rem; }
+            .coin-topbar { padding: 6px 16px; }
+            .coin-amount { font-size: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="stars" id="starsContainer"></div>
+
+<div id="loadingOverlay">
+    <div class="loader-logo">
+        <h1>⚡ SENDI STORE</h1>
+        <div class="loader-text">PREMIUM UID MARKETPLACE</div>
+        <div class="loader-progress">
+            <div class="loader-progress-bar"></div>
+        </div>
+    </div>
+</div>
+
+<div class="coin-topbar" id="openTopupModal">
+    <span class="coin-icon">🪙</span>
+    <span class="coin-amount" id="userCoinDisplay">0</span>
+    <span style="font-size:0.8rem;">▼</span>
+</div>
+
+<div class="admin-btn">
+    <a href="admin.html">👑 ADMIN DASHBOARD</a>
+</div>
+
+<div class="container">
+    <div class="store-header">
+        <h1>🛒 SENDI STORE</h1>
+        <div class="tagline">Premium Account IDs · Rare Collection · Instant Delivery</div>
+    </div>
+
+    <div class="kode-section">
+        <div class="kode-label">🔑 KODE AKUN ANDA</div>
+        <div class="kode-akun-box" id="userKodeAkun">-</div>
+        <button id="copyKodeBtn" class="copy-btn">📋 Salin Kode</button>
+        <div class="kode-hint">Berikan kode ini ke admin untuk topup koin</div>
+    </div>
+
+    <div class="stats-row">
+        <div class="stat-card">
+            <div class="stat-icon">🪙</div>
+            <div class="stat-label">TOTAL KOIN</div>
+            <div class="stat-number" id="statCoin">0</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">📦</div>
+            <div class="stat-label">STOK UID</div>
+            <div class="stat-number" id="totalUidCount">0</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">⚡</div>
+            <div class="stat-label">PREMIUM</div>
+            <div class="stat-number">AKTIF</div>
+        </div>
+    </div>
+
+    <div class="table-wrapper">
+        <table class="data-table">
+            <thead>
+                <tr><th>#</th><th>TIER</th><th>UID</th><th>HARGA (Koin)</th><th>AKSI</th></tr>
+            </thead>
+            <tbody id="tableBody">
+                <tr><td colspan="5" style="text-align:center">🔄 Memuat data premium...</td></tr>
+            </tbody>
+        </table>
+    </div>
+    
+    <footer class="footer">
+        <p>💎 Premium Store — Beli UID dengan Koin | Topup via QRIS</p>
+    </footer>
+</div>
+
+<div id="topupModal" class="modal">
+    <div class="modal-content">
+        <span class="close-modal" id="closeModal">&times;</span>
+        <h3>🪙 TOPUP KOIN</h3>
+        <p style="margin-bottom: 1rem;">Scan QRIS di bawah, kirim bukti ke admin</p>
+        <img id="qrisImage" src="https://files.catbox.moe/yozeik.jpg" style="width:100%; max-width:250px; margin:10px auto; border-radius: 20px;">
+        <div style="margin: 15px 0; padding: 10px; background: rgba(0,0,0,0.3); border-radius: 12px;">
+            <span style="font-size:0.7rem;">🔑 Kode Akun Kamu</span><br>
+            <strong id="modalKodeAkun" style="font-size:1rem; color:#ffa559;">-</strong>
+        </div>
+        <div style="font-size:0.7rem; color:#aaa;">QRIS Standar Nasional — SENDI STORE</div>
+    </div>
+</div>
+
+<script src="form.js"></script>
+<script>
+    function createStars() {
+        const starsContainer = document.getElementById('starsContainer');
+        for(let i = 0; i < 150; i++) {
+            const star = document.createElement('div');
+            star.className = 'star';
+            star.style.width = Math.random() * 3 + 'px';
+            star.style.height = star.style.width;
+            star.style.left = Math.random() * 100 + '%';
+            star.style.top = Math.random() * 100 + '%';
+            star.style.animationDelay = Math.random() * 5 + 's';
+            star.style.animationDuration = 2 + Math.random() * 3 + 's';
+            starsContainer.appendChild(star);
+        }
+    }
+    createStars();
+    
+    window.addEventListener('load', () => {
+        setTimeout(() => {
+            const load = document.getElementById('loadingOverlay');
+            load.style.opacity = '0';
+            setTimeout(() => load.remove(), 800);
+        }, 1800);
+    });
+</script>
+</body>
+</html>
