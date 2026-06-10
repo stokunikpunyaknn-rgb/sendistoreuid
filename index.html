@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>UID STORE | SENDI STORE</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #0a0c12;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', system-ui, monospace;
+            padding: 2rem 1rem;
+            color: #ededed;
+        }
+
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+        }
+
+        /* header persis kyk web asli */
+        .store-title {
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+        .store-title h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #FFD966, #FFA559, #FF6A4A);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: 1px;
+        }
+        .tagline {
+            text-align: center;
+            font-size: 0.8rem;
+            color: #aaa;
+            letter-spacing: 2px;
+            margin-top: 4px;
+            word-break: keep-all;
+        }
+        .loading-text {
+            text-align: center;
+            font-size: 0.75rem;
+            color: #ffb347;
+            margin: 12px 0 20px 0;
+            font-family: monospace;
+        }
+
+        /* stats card — mirip layout asli */
+        .stats-row {
+            display: flex;
+            justify-content: center;
+            gap: 1.2rem;
+            flex-wrap: wrap;
+            margin: 25px 0 30px;
+        }
+        .stat-item {
+            background: #11161f;
+            border-radius: 2rem;
+            padding: 0.5rem 1.8rem;
+            text-align: center;
+            border: 1px solid #2a2f3e;
+            min-width: 130px;
+            box-shadow: 0 5px 12px rgba(0,0,0,0.3);
+        }
+        .stat-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            color: #9aa4bf;
+            letter-spacing: 1px;
+        }
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #ffbc6e;
+            line-height: 1.2;
+        }
+
+        /* table */
+        .table-container {
+            background: #0d1119;
+            border-radius: 1.5rem;
+            border: 1px solid #232838;
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+            min-width: 620px;
+        }
+        th {
+            text-align: left;
+            padding: 1rem 1rem;
+            background: #0b0f17;
+            color: #ffc285;
+            font-weight: 600;
+            border-bottom: 1px solid #2a3146;
+        }
+        td {
+            padding: 0.85rem 1rem;
+            border-bottom: 1px solid #181e2c;
+            vertical-align: middle;
+        }
+        tr:hover {
+            background: #10141f;
+        }
+        .uid-col {
+            font-family: 'SF Mono', 'Courier New', monospace;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+        }
+        .price-col {
+            font-weight: 700;
+            color: #ffbc6e;
+        }
+        .buy-btn {
+            background: #25D366;
+            border: none;
+            padding: 6px 18px;
+            border-radius: 40px;
+            font-weight: bold;
+            color: #0a2617;
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: 0.1s;
+            font-family: inherit;
+        }
+        .buy-btn:hover {
+            background: #1fbd58;
+            transform: scale(0.96);
+        }
+
+        /* admin panel dihilangkan total, cuma ada watermark tipis */
+        .no-admin-notice {
+            text-align: center;
+            font-size: 0.65rem;
+            margin-top: 20px;
+            color: #3a415a;
+            border-top: 1px solid #1e2438;
+            padding-top: 20px;
+        }
+        footer {
+            text-align: center;
+            font-size: 0.7rem;
+            margin: 1.5rem 0 0;
+            color: #5b6382;
+        }
+        @media (max-width: 680px) {
+            body { padding: 1rem; }
+            .stat-item { padding: 0.3rem 1rem; min-width: 100px; }
+            .stat-value { font-size: 1.6rem; }
+            th, td { padding: 0.7rem 0.8rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="store-title">
+        <h1>⚡ UID STORE</h1>
+        <div class="tagline">Premium Account IDs · Rare Collection · EPEP</div>
+        <div class="loading-text">⟳ MEMUAT DATA DARI SERVER...</div>
+    </div>
+
+    <!-- stats row: total UID & harga kisaran -->
+    <div class="stats-row">
+        <div class="stat-item">
+            <div class="stat-label">📦 TOTAL UID</div>
+            <div class="stat-value" id="totalUidCount">0</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-label">🌐 DARI API</div>
+            <div class="stat-value" id="apiCount">0</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-label">💰 RANGE</div>
+            <div class="stat-value">10k-800k</div>
+        </div>
+    </div>
+
+    <!-- tabel UID -->
+    <div class="table-container">
+        <table id="uidTable">
+            <thead>
+                <tr><th>#</th><th>TIER</th><th>UID</th><th>HARGA (IDR)</th><th>BELI</th></tr>
+            </thead>
+            <tbody id="tableBody">
+                <tr><td colspan="5" style="text-align:center">⟳ MEMUAT DATA DARI SERVER...</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- tanpa admin panel, hanya info penanda -->
+    <div class="no-admin-notice">
+        ⚡ DATA STOK LANGSUNG DARI SENDI STORE · UPDATE REAL TIME
+    </div>
+    <footer>
+        📍 KLIK BELI → LANGSUNG KE WHATSAPP ADMIN
+    </footer>
+</div>
+
+<script>
+    // ========= STOK LENGKAP PUNYA USER (56 UID) ==========
+    const STOCK_DATA = [
+        { uid: "15766666666", price: 800000 },
+        { uid: "15766666696", price: 70000 },
+        { uid: "15400000030", price: 400000 },
+        { uid: "15766667878", price: 40000 },
+        { uid: "15766667373", price: 40000 },
+        { uid: "15762222277", price: 45000 },
+        { uid: "15866669944", price: 30000 },
+        { uid: "15866660777", price: 35000 },
+        { uid: "15762229988", price: 35000 },
+        { uid: "15757883322", price: 30000 },
+        { uid: "15766666971", price: 20000 },
+        { uid: "15766666744", price: 20000 },
+        { uid: "15766666732", price: 20000 },
+        { uid: "15766666740", price: 20000 },
+        { uid: "15766666747", price: 20000 },
+        { uid: "15766666758", price: 20000 },
+        { uid: "15766666722", price: 20000 },
+        { uid: "15766667786", price: 20000 },
+        { uid: "15766667794", price: 20000 },
+        { uid: "15766667792", price: 20000 },
+        { uid: "15766666563", price: 20000 },
+        { uid: "15766666572", price: 20000 },
+        { uid: "15766667749", price: 15000 },
+        { uid: "15766667375", price: 15000 },
+        { uid: "15766667334", price: 15000 },
+        { uid: "15766667672", price: 15000 },
+        { uid: "15766674446", price: 15000 },
+        { uid: "15766667372", price: 15000 },
+        { uid: "15766690011", price: 25000 },
+        { uid: "15766682225", price: 15000 },
+        { uid: "15766689977", price: 15000 },
+        { uid: "15766689911", price: 15000 },
+        { uid: "15766690666", price: 15000 },
+        { uid: "15754333339", price: 15000 },
+        { uid: "15754333838", price: 15000 },
+        { uid: "15754333212", price: 15000 },
+        { uid: "15761222227", price: 20000 },
+        { uid: "15762222249", price: 20000 },
+        { uid: "15762222129", price: 15000 },
+        { uid: "15762222109", price: 15000 },
+        { uid: "15762222203", price: 15000 },
+        { uid: "15762222287", price: 20000 },
+        { uid: "15762222477", price: 20000 },
+        { uid: "15762229930", price: 10000 },
+        { uid: "15762230038", price: 10000 },
+        { uid: "15762229969", price: 10000 },
+        { uid: "15762229952", price: 10000 },
+        { uid: "15762230305", price: 10000 },
+        { uid: "15762236665", price: 10000 },
+        { uid: "15763511111", price: 15000 },
+        { uid: "15763511112", price: 15000 },
+        { uid: "15757883320", price: 15000 },
+        { uid: "15757875567", price: 25000 },
+        { uid: "15757883366", price: 20000 },
+        { uid: "15759999908", price: 22000 },
+        { uid: "15759999958", price: 25000 },
+        { uid: "15759999951", price: 25000 },
+        { uid: "15760000656", price: 25000 },
+        { uid: "15760000538", price: 15000 },
+        { uid: "15760000223", price: 15000 },
+        { uid: "15760067555", price: 15000 }
+    ];
+
+    // nomor wa tujuan persis: +62 887-4372-56882
+    const WA_PHONE = "62887437256882"; 
+
+    function formatRupiah(angka) {
+        return new Intl.NumberFormat('id-ID').format(angka) + " IDR";
+    }
+
+    // tier berdasarkan harga (mirip gaya web)
+    function getTier(price) {
+        if (price >= 400000) return "🏆 LEGEND";
+        if (price >= 100000) return "💎 DIAMOND";
+        if (price >= 50000) return "🌟 GOLD";
+        if (price >= 25000) return "⚡ SILVER";
+        return "🔹 BRONZE";
+    }
+
+    // fungsi untuk redirect whatsapp dengan pesan sesuai template
+    function sendToWA(uid, price) {
+        const priceRaw = formatRupiah(price);
+        const message = `📍HALO ADMIN SENDI STORE, SAYA INGIN MEMBELI UID : ${uid} | HARGA : ${priceRaw}, KIRIM PAYMENT UNTUK SAYA LANJUTKAN BAYAR`;
+        const encodedMsg = encodeURIComponent(message);
+        const waUrl = `https://wa.me/${WA_PHONE}?text=${encodedMsg}`;
+        window.open(waUrl, "_blank");
+    }
+
+    // render tabel lengkap dengan data stok milik user
+    function renderTable() {
+        const tbody = document.getElementById("tableBody");
+        const totalSpan = document.getElementById("totalUidCount");
+        const apiSpan = document.getElementById("apiCount");
+
+        if (!STOCK_DATA.length) {
+            tbody.innerHTML = `<tr><td colspan="5" style="text-align:center">⚠️ STOK KOSONG</td></tr>`;
+            totalSpan.innerText = "0";
+            apiSpan.innerText = "0";
+            return;
+        }
+
+        let rows = "";
+        STOCK_DATA.forEach((item, idx) => {
+            const tierLabel = getTier(item.price);
+            const hargaFormatted = formatRupiah(item.price);
+            rows += `
+                <tr>
+                    <td>${idx + 1}</td>
+                    <td>${tierLabel}</td>
+                    <td class="uid-col">${item.uid}</td>
+                    <td class="price-col">${hargaFormatted}</td>
+                    <td><button class="buy-btn" data-uid="${item.uid}" data-price="${item.price}">BELI</button></td>
+                </tr>
+            `;
+        });
+
+        tbody.innerHTML = rows;
+        totalSpan.innerText = STOCK_DATA.length;
+        apiSpan.innerText = STOCK_DATA.length;   // "DARI API" sesuai jumlah data dari server-side (statis)
+
+        // attach event ke semua tombol beli
+        document.querySelectorAll('.buy-btn').forEach(btn => {
+            const uid = btn.getAttribute('data-uid');
+            const price = parseInt(btn.getAttribute('data-price'));
+            btn.removeEventListener('click', (e) => {});
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                sendToWA(uid, price);
+            });
+        });
+    }
+
+    // simulasi loading effect seperti web asli (teks loading berganti)
+    window.addEventListener('DOMContentLoaded', () => {
+        const loadingEl = document.querySelector('.loading-text');
+        if (loadingEl) {
+            setTimeout(() => {
+                loadingEl.style.opacity = '0.6';
+                loadingEl.innerHTML = '✅ DATA STOK SIAP · KLIK BELI LANGSUNG WA';
+                setTimeout(() => {
+                    loadingEl.style.opacity = '1';
+                }, 200);
+            }, 400);
+        }
+        renderTable();
+    });
+</script>
+</body>
+</html>
